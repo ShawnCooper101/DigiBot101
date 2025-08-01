@@ -1,0 +1,24 @@
+{
+  "name": "digibot101",
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "src/app/**/*.{js,ts,jsx,tsx}": {
+      "maxDuration": 30
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "digibot101",
+  "version": "1.0.0",
+  "description": "A special ai with voice specifically for my personal assistant and DigiMark101 digital marketing agency Manger/ receptionist and much much more",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [
+    "ai",
+    "assistant",
+    "voice",
+    "chatbot",
+    "digital-marketing"
+  ],
+  "author": "ShawnCooper101",
+  "license": "ISC",
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/node": "^24.1.0",
+    "@types/react": "^19.1.9",
+    "autoprefixer": "^10.4.21",
+    "next": "^15.4.5",
+    "postcss": "^8.5.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.9.2"
+  }
+}
