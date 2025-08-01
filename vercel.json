@@ -1,0 +1,32 @@
+{
+  "version": 3,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "OPENAI_API_KEY": "@openai_api_key",
+    "OPENAI_API_URL": "@openai_api_url",
+    "VOICE_SYNTHESIS_URL": "@voice_synthesis_url",
+    "SPEECH_TO_TEXT_URL": "@speech_to_text_url",
+    "WEBHOOK_URL": "@webhook_url",
+    "EXTERNAL_API_URL": "@external_api_url"
+  },
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "runtime": "@vercel/node"
+    }
+  }
+}
