@@ -22,6 +22,8 @@ export interface VoiceSettings {
   pitch: number;
   rate: number;
   voice?: string;
+  voiceId?: string;
+  style?: number;
 }
 
 export interface ChatState {

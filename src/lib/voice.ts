@@ -1,3 +1,4 @@
+import { voiceManager } from '@/lib/voiceProviders';
 import { VoiceSettings } from '@/types';
 
 // Extend the Window interface to include speech recognition types
@@ -19,7 +20,6 @@ interface SpeechRecognitionEvent {
 }
 
 export class VoiceService {
-  private synthesis: SpeechSynthesis | null = null;
   private recognition: any = null;
   private isInitialized = false;
 
@@ -29,11 +29,6 @@ export class VoiceService {
 
   private initializeServices() {
     if (typeof window !== 'undefined') {
-      // Initialize Speech Synthesis
-      if ('speechSynthesis' in window) {
-        this.synthesis = window.speechSynthesis;
-      }
-
       // Initialize Speech Recognition
       if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -48,40 +43,17 @@ export class VoiceService {
   }
 
   async speak(text: string, settings: VoiceSettings): Promise<void> {
-    if (!this.synthesis || !this.isInitialized) {
-      console.warn('Speech synthesis not available');
+    if (!this.isInitialized) {
+      console.warn('Voice service not initialized');
       return;
     }
 
-    return new Promise((resolve, reject) => {
-      const utterance = new SpeechSynthesisUtterance(text);
-      
-      // Apply voice settings
-      utterance.pitch = settings.pitch;
-      utterance.rate = settings.rate;
-      
-      // Try to find appropriate voice
-      const voices = this.synthesis!.getVoices();
-      if (voices.length > 0) {
-        const preferredVoice = voices.find(voice => 
-          voice.name.toLowerCase().includes(settings.voice || 'default') ||
-          (settings.voice === 'female' && voice.name.toLowerCase().includes('female')) ||
-          (settings.voice === 'male' && voice.name.toLowerCase().includes('male'))
-        );
-        
-        if (preferredVoice) {
-          utterance.voice = preferredVoice;
-        } else {
-          // Fallback to first available voice
-          utterance.voice = voices[0];
-        }
-      }
-
-      utterance.onend = () => resolve();
-      utterance.onerror = (error) => reject(error);
-
-      this.synthesis!.speak(utterance);
-    });
+    try {
+      await voiceManager.speak(text, settings);
+    } catch (error) {
+      console.error('Voice synthesis error:', error);
+      throw error;
+    }
   }
 
   async listen(): Promise<string> {
@@ -108,24 +80,39 @@ export class VoiceService {
   }
 
   stop() {
-    if (this.synthesis) {
-      this.synthesis.cancel();
-    }
     if (this.recognition) {
       this.recognition.stop();
     }
+    // Voice manager handles stopping speech synthesis
   }
 
   isSupported(): boolean {
-    return this.isInitialized && (!!this.synthesis || !!this.recognition);
+    return this.isInitialized && voiceManager.getAvailableProviders().length > 0;
   }
 
   isSpeechSynthesisSupported(): boolean {
-    return this.isInitialized && !!this.synthesis;
+    return this.isInitialized && voiceManager.getAvailableProviders().length > 0;
   }
 
   isSpeechRecognitionSupported(): boolean {
     return this.isInitialized && !!this.recognition;
+  }
+
+  // New methods for premium voice management
+  async getAvailableVoices() {
+    return await voiceManager.getAllVoices();
+  }
+
+  getAvailableProviders() {
+    return voiceManager.getAvailableProviders();
+  }
+
+  setVoiceProvider(providerId: string): boolean {
+    return voiceManager.setProvider(providerId);
+  }
+
+  getCurrentProvider() {
+    return voiceManager.getCurrentProvider();
   }
 }
 
