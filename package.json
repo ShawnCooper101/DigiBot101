@@ -3,11 +3,20 @@
   "version": "1.0.0",
   "description": "A special ai with voice specifically for my personal assistant and DigiMark101 digital marketing agency Manger/ receptionist and much much more",
   "private": true,
+  "main": "electron/main.js",
+  "homepage": "./",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next build && next export",
+    "electron": "cross-env NODE_ENV=development concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron-dev": "cross-env NODE_ENV=development electron .",
+    "electron-pack": "npm run build && npm run export && electron-builder",
+    "dist": "npm run build && npm run export && electron-builder --publish=never",
+    "pack": "electron-builder --dir",
+    "build-electron": "npm run export && electron-builder"
   },
   "keywords": [
     "ai",
@@ -18,16 +27,50 @@
   ],
   "author": "ShawnCooper101",
   "license": "ISC",
+  "build": {
+    "appId": "com.digimark101.digibot101",
+    "productName": "DigiBot101",
+    "directories": {
+      "buildResources": "electron/assets"
+    },
+    "files": [
+      "out/**/*",
+      "electron/**/*",
+      "node_modules/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "electron/assets/icon.png"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^24.1.0",
     "@types/react": "^19.1.9",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.0",
+    "cross-env": "^10.0.0",
+    "electron": "^37.2.5",
+    "electron-builder": "^26.0.12",
     "next": "^15.4.5",
     "postcss": "^8.5.6",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "wait-on": "^8.0.4"
   }
 }
